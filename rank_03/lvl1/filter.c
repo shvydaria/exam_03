@@ -14,8 +14,8 @@ int	main(int ac, char **av)
 
 	char buffer[1024]; // Standard buffer size
 	char *res = NULL;
-	char *temp;
 	char *find = av[1];
+	char *temp;
 	char *pos;
 	int find_len = strlen(find);
 	int res_size = 0;
