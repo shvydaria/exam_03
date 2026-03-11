@@ -110,7 +110,9 @@ int	main(int ac, char **av)
 		diag2[i] = 0;
 		i++;
 	}
-    solve(0, queens, rows, diag1, diag2);
+    if (solve(0, queens, rows, diag1, diag2) == 0) {
+        write(1, "No solution\n", 12);
+    }
 	free(queens);
 	free(rows);
 	free(diag1);
