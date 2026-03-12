@@ -55,9 +55,8 @@ void print_board(int *queens) {
 
 int	solve(int col, int *queens, int *rows, int *diag1, int *diag2)
 {
-	int	r;
-
-	r = 0;
+	int	r = 0;
+	
 	if (col == n)
 	{
 		print_board(queens);

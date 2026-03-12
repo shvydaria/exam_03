@@ -1,72 +1,96 @@
 // alphabetical order
-
 #include <stdlib.h>
 #include <unistd.h>
 
-// 1. Simple strlen
-int ft_strlen(char *s)
-{
+int n;
+
+int	atoi(const char *str) {
     int i = 0;
-    while (s[i])
+    int sign = 1;
+    int res = 0;
+
+    while((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
         i++;
-    return i;
-}
-
-// 2. Simple bubble sort for alphabetical order
-void sort_str(char *s)
-{
-    for (int i = 0; s[i]; i++)
-    {
-        for (int j = i + 1; s[j]; j++)
-        {
-            if (s[i] > s[j])
-            {
-                char temp = s[i];
-                s[i] = s[j];
-                s[j] = temp;
-            }
-        }
+    if(str[i] == '-') {
+        sign = -1;
+        i++;
     }
+    else if(str[i] == '+')
+        i++;
+    while(str[i] >= '0' && str[i] <= '9') {
+        res = (res*10) + (str[i] - '0');
+        i++;
+    }
+    return(res * sign);
 }
 
-void solve(char *s, char *res, int *used, int pos, int len)
-{
-    if (pos == len)
-    {
-        write(1, res, len);
-        write(1, "\n", 1);
+void swap(int *a, int *b) {
+    int x;
+    x = *a;
+    *a = *b;
+    *b = x;
+}
+
+void putchar(char c) {
+    write(1, &c, 1);
+}
+
+void putnbr (int n) {
+    char c;
+
+    if(n > 9)
+        putnbr(n/10);
+    c = (n%10) + '0';
+    putchar(c);
+}
+
+void print_arr(int *arr) {
+    int i = 0;
+
+    while(i < n) {
+        putnbr(arr[i]);
+        if (i < n - 1)
+            putchar(' ');
+        i++;
+    }
+    write(1, "\n", 1);
+}
+
+void solve(int pos, int *arr) {
+    int i;
+
+    if (pos == n) {
+        print_arr(arr);
         return;
     }
-    
-    for (int i = 0; i < len; i++)
-    {
-        if (!used[i]) // If we haven't used this letter yet
-        {
-            used[i] = 1;
-            res[pos] = s[i];
-            solve(s, res, used, pos + 1, len);
-            used[i] = 0; // Backtrack!
-        }
+    i = pos;
+    while(i < n) {
+        swap(&arr[pos], &arr[i]);
+        solve(pos+1, arr);
+        swap(&arr[pos], &arr[i]);
+        i++;
     }
 }
 
-int main(int ac, char **av)
-{
-    if (ac != 2)
-        return 0;
+int main(int ac, char **av) {
+    if(ac != 2)
+        return(0);
+    
+    n = atoi(av[1]);
 
-    char *s = av[1];
-    int len = ft_strlen(s);
-    
-    sort_str(s); // Sort it first!
-    
-    char *res = malloc(len + 1);
-    int *used = calloc(len, sizeof(int)); // calloc sets everything to 0
-    
-    if (res && used)
-        solve(s, res, used, 0, len);
-        
-    free(res);
-    free(used);
-    return 0;
+    if(n <= 0)
+        return(1);
+    else if(n == 1) {
+        write(1, "1\n", 2);
+        return (0);
+    }
+    int *arr = malloc(n*sizeof(int));
+    int i = 0;
+    while(i < n) {
+        arr[i] = i+1;
+        i++;
+    }
+    solve(0, arr);
+    free(arr);
+    return (0);
 }
