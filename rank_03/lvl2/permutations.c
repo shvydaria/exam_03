@@ -1,4 +1,3 @@
-// alphabetical order
 #include <stdlib.h>
 #include <unistd.h>
 

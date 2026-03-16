@@ -8,11 +8,10 @@
 
 int	main(int ac, char **av)
 {
-	// Check for exactly 1 non-empty argument
 	if (ac != 2 || av[1][0] == '\0')
 		return (1);
 
-	char buffer[1024]; // Standard buffer size
+	char buffer[1024];
 	char *res = NULL;
 	char *find = av[1];
 	char *temp;
@@ -21,7 +20,6 @@ int	main(int ac, char **av)
 	int res_size = 0;
 	int bytes;
 
-	// 1. READ Loop
 	while ((bytes = read(0, buffer, sizeof(buffer))) > 0)
 	{
 		temp = realloc(res, res_size + bytes + 1);
@@ -43,17 +41,26 @@ int	main(int ac, char **av)
 		perror("Error");
 		return (1);
 	}
-
 	if (!res)
 		return (0);
 
-	// 2. FILTER Loop
 	while ((pos = memmem(res, res_size, find, find_len))) {
 		for (int i = 0; i < find_len; i++)
 			pos[i] = '*';
 	}
-	// 3. OUTPUT
 	write(1, res, res_size);
 	free(res);
 	return (0);
 }
+
+// in case of infinite loop:
+/*
+char *search_start = res;
+int remaining_size = res_size;
+while ((pos = memmem(search_start, remaining_size, find, find_len))) {
+    for (int i = 0; i < find_len; i++)
+        pos[i] = '*';
+    search_start = pos + find_len;
+    remaining_size = res_size - (search_start - res);
+}
+*/
