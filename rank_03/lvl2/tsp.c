@@ -46,6 +46,5 @@ int main (void) {
 	visited[0] = 1;
 	solve(0, 1, 0.0);
 	printf("%.2f\n", min_dist);
-	
 	return (0);
 }

@@ -84,7 +84,9 @@ int main(int ac, char **av) {
         write(1, "1\n", 2);
         return (0);
     }
+
     int *arr = malloc(n*sizeof(int));
+    
     int i = 0;
     while(i < n) {
         arr[i] = i+1;
@@ -94,3 +96,19 @@ int main(int ac, char **av) {
     free(arr);
     return (0);
 }
+
+// NEGATIVE VERSION
+// void putnbr(int n) {
+//     if (n == -2147483648) {
+//         write(1, "-2147483648", 11);
+//         return;
+//     }
+//     if (n < 0) {
+//         putchar('-');
+//         n = -n;
+//     }
+//     if (n > 9) {
+//         putnbr(n / 10);
+//     }
+//     putchar((n % 10) + '0');
+// }
