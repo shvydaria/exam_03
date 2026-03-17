@@ -51,16 +51,14 @@ void solve_powerset(int *input, int *basket, int size, int target, int pos, int 
             print_basket(basket, basket_len);
         return;
     }
-    // Choice 1: Exclude
     solve_powerset(input, basket, size, target, pos + 1, sum, basket_len);
-    
-    // Choice 2: Include
     basket[basket_len] = input[pos];
     solve_powerset(input, basket, size, target, pos + 1, sum + input[pos], basket_len + 1);
 }
 
 int main(int ac, char **av) {
-    if (ac < 2) return (0);
+    if (ac < 2)
+        return (0);
 
     int target = ft_atoi(av[1]);
     int size = ac - 2;

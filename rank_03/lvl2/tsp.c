@@ -1,5 +1,14 @@
-#include <math.h>
-#include <stdio.h>
+// Header
+#ifndef TSP_H
+# define TSP_H
+# include <stdio.h>
+# include <math.h>
+
+float calc_dist(float x1, float y1, float x2, float y2);
+void  solve(int current_city, int count, float current_dist);
+
+#endif
+// Header 
 
 float x[15];
 float y[15];
