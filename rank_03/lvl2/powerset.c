@@ -24,8 +24,8 @@ void solve_powerset(int *input, int *basket, int size, int target, int pos, int 
 }
 
 int main(int ac, char **av) {
-    if (ac < 2)
-        return (0);
+    if (ac < 3)
+        return (1);
 
     int target = atoi(av[1]);
     int size = ac - 2;

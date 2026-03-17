@@ -1,199 +1,90 @@
-
 #include <stdio.h>
 #include <stdarg.h>
 #include <ctype.h>
 
-int match_space(FILE *f)
-{
-    int ch = fgetc(f);
-    if (ch == EOF && ferror(f))
-        return -1;
-    
-    while (ch != EOF)
-    {
-        if (!isspace(ch))
-        {
-            ungetc(ch, f);
-            break;
-        }
-        ch = fgetc(f);
-    }
-    
-    if (ferror(f))
-        return -1;
-    return 1;
-}
-
-int match_char(FILE *f, char c)
-{
-    int ch = fgetc(f);
-    if (ch == c)
-        return 1;
-    if (ch != EOF)
-        ungetc(ch, f);
-    return -1;
-}
-
-int scan_char(FILE *f, va_list ap)
-{
-    int ch = fgetc(f);
-    char *cp = va_arg(ap, char *);
-
-    if (ch == EOF)
-        return -1;
-    
-    *cp = (char)ch;
-    return 1;
-}
-
-int scan_int(FILE *f, va_list ap)
-{
-    int sign = 1;
-    int value = 0;
-    int ch = fgetc(f);
-    int *ip = va_arg(ap, int *);
+int ft_scanf(const char *format, ...) {
+    va_list args;
     int count = 0;
+    int c;
 
-    if (ch == EOF)
-        return -1;
-    while (isspace(ch))
-        ch = fgetc(f);
-    if (ch == '-')
-    {
-        sign = -1;
-        ch = fgetc(f);
-    }
-    else if (ch == '+')
-    {
-        ch = fgetc(f);
-    }
-    if (!isdigit(ch))
-    {
-        ungetc(ch, f);
-        return -1;
-    }
-    while (isdigit(ch))
-    {
-        value = value * 10 + (ch - '0');
-        count++;
-        ch = fgetc(f);
-    }
-    if (ch != EOF)
-        ungetc(ch, f);
+    va_start(args, format);
 
-    if (count == 0)
-        return -1;
-    
-    *ip = value * sign;
-    return 1;
-}
-
-int scan_string(FILE *f, va_list ap)
-{
-    int ch = fgetc(f);
-    char *sp = va_arg(ap, char *);
-    int i = 0;
-
-    while (ch != EOF && isspace(ch))
-        ch = fgetc(f);
-    
-    if (ch == EOF)
-        return -1;
-    do
-    {
-        sp[i] = ch;
-        i++;
-        ch = fgetc(f);
-    } while (ch != EOF && !isspace(ch));
-    
-    sp[i] = '\0';
-    if (ch != EOF)
-        ungetc(ch, f);
-    
-    if (i == 0)
-        return -1;
-    return 1;
-}
-
-int match_conv(FILE *f, const char **format, va_list ap)
-{
-    switch (**format)
-    {
-        case 'c':
-            return scan_char(f, ap);
-        case 'd':
-            match_space(f);
-            return scan_int(f, ap);
-        case 's':
-            match_space(f);
-            return scan_string(f, ap);
-        case '\0':
-            return -1;
-        default:
-            return -1;
-    }
-}
-
-int ft_vfscanf(FILE *f, const char *format, va_list ap)
-{
-    int nconv = 0;
-    int c = fgetc(f);
-    if (c == EOF)
-        return EOF;
-    ungetc(c, f);
-
-    while (*format)
-    {
-        if (*format == '%')
-        {
+    while (*format){
+        if (isspace(*format)){
+            while (isspace(c = fgetc(stdin)))
+            if (c != EOF)
+                ungetc(c, stdin);
+            while (isspace(*format))
+                format++;
+            continue;
+        }
+        if (*format == '%' && (*(format + 1) == 'd' || *(format + 1) == 's' || *(format + 1) == 'c')){
             format++;
-            if (match_conv(f, &format, ap) != 1)
-                break;
-            else
-                nconv++;
+            if (*format == 'd')
+            {
+                int *n = va_arg(args, int *);
+                int sign = 1;
+                
+                while (isspace(c = fgetc(stdin)));
+                if (c == EOF) { if (count == 0) count = EOF; break; }
+                
+                if (c == '-' || c == '+') {
+                    if (c == '-') sign = -1;
+                    c = fgetc(stdin);
+                }
+                
+                if (!isdigit(c)) { 
+                    if (c != EOF) ungetc(c, stdin); 
+                    break;
+                }
+                
+                *n = 0;
+                while (isdigit(c)) {
+                    *n = (*n * 10) + (c - '0');
+                    c = fgetc(stdin);
+                }
+                *n *= sign;
+                if (c != EOF) ungetc(c, stdin);
+                count++;
+            }
+            else if (*format == 's'){
+                char *s = va_arg(args, char *);
+                
+                while (isspace(c = fgetc(stdin)));
+                if (c == EOF) { if (count == 0) count = EOF; break; }
+                
+                int i = 0;
+                while (c != EOF && !isspace(c)) {
+                    s[i++] = c;
+                    c = fgetc(stdin);
+                }
+                s[i] = '\0';
+                if (c != EOF) ungetc(c, stdin);
+                count++;
+            }
+            else if (*format == 'c'){
+                char *ch = va_arg(args, char *);
+                c = fgetc(stdin);
+                if (c == EOF) { if (count == 0) count = EOF; break; }
+                
+                *ch = c;
+                count++;
+            }
         }
-        else if (isspace(*format))
-        {
-            if (match_space(f) == -1)
+        else {
+            c = fgetc(stdin);
+            if (c == EOF && count == 0) {
+                count = EOF;
                 break;
-        }
-        else
-        {
-            if (match_char(f, *format) != 1)
-                break;
+            }
+            if (c != *format) {
+                if (c != EOF) ungetc(c, stdin);
+                break; // Mismatch!
+            }
         }
         format++;
     }
-    if (ferror(f))
-        return EOF;
-    
-    return nconv;
+
+    va_end(args);
+    return (count);
 }
-
-int ft_scanf(const char *format, ...)
-{
-    va_list ap;
-
-    va_start(ap, format);
-    int ret = ft_vfscanf(stdin, format, ap);
-    va_end(ap);
-    
-    return ret;
-}
-
-/*
- * int main(void)
- * {
- *     int x;
- *     char str[100];
- *     char c;
- * 
- *     // Leer: número, espacio, string, espacio, carácter
- *     int converted = ft_scanf("%d %s %c", &x, str, &c);
- *     
- *     printf("Convertidos: %d\n", converted);
- *     printf("Número: %d, String: %s, Carácter: %c\n", x, str, c);
- *     
- *     return 0;
- * }
- */
