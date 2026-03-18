@@ -81,40 +81,61 @@ int	solve(int col, int *queens, int *rows, int *diag1, int *diag2)
 	return (0);
 }
 
-int	main(int ac, char **av)
+int main(int ac, char **av)
 {
-	if (ac != 2)
-		return (0);
+    if (ac != 2)
+        return (0);
 
-	int i;
+    n = atoi(av[1]);
+    if (n <= 0)
+        return (1);
+        
+    int *queens = malloc(n * sizeof(int));
+    int *rows = calloc(n, sizeof(int));
+    int *diag1 = calloc((n * 2) - 1, sizeof(int));
+    int *diag2 = calloc((n * 2) - 1, sizeof(int));
 
-	n = atoi(av[1]);
-	if (n <= 0)
-		return (1);
-	int *queens = malloc(n * sizeof(int));
-	int *rows = malloc(n * sizeof(int));
-	int *diag1 = malloc(((n * 2) - 1) * sizeof(int));
-	int *diag2 = malloc(((n * 2) - 1) * sizeof(int));
-	i = 0;
-	while (i < n)
-	{
-		queens[i] = 0;
-		rows[i] = 0;
-		i++;
-	}
-	i = 0;
-	while (i < ((n * 2) - 1))
-	{
-		diag1[i] = 0;
-		diag2[i] = 0;
-		i++;
-	}
-    if (solve(0, queens, rows, diag1, diag2) == 0) {
+    if (solve(0, queens, rows, diag1, diag2) == 0)
         write(1, "No solution\n", 12);
-    }
-	free(queens);
-	free(rows);
-	free(diag1);
-	free(diag2);
-	return (0);
+
+    free(queens); free(rows); free(diag1); free(diag2);
+    return (0);
 }
+
+// int	main(int ac, char **av)
+// {
+// 	if (ac != 2)
+// 		return (0);
+
+// 	int i;
+
+// 	n = atoi(av[1]);
+// 	if (n <= 0)
+// 		return (1);
+// 	int *queens = malloc(n * sizeof(int));
+// 	int *rows = malloc(n * sizeof(int));
+// 	int *diag1 = malloc(((n * 2) - 1) * sizeof(int));
+// 	int *diag2 = malloc(((n * 2) - 1) * sizeof(int));
+// 	i = 0;
+// 	while (i < n)
+// 	{
+// 		queens[i] = 0;
+// 		rows[i] = 0;
+// 		i++;
+// 	}
+// 	i = 0;
+// 	while (i < ((n * 2) - 1))
+// 	{
+// 		diag1[i] = 0;
+// 		diag2[i] = 0;
+// 		i++;
+// 	}
+//     if (solve(0, queens, rows, diag1, diag2) == 0) {
+//         write(1, "No solution\n", 12);
+//     }
+// 	free(queens);
+// 	free(rows);
+// 	free(diag1);
+// 	free(diag2);
+// 	return (0);
+// }
