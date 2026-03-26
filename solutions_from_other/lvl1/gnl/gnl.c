@@ -1,4 +1,3 @@
-
 #include "gnl_norm.h"
 
 char *ft_strchr(char *s, int c)
@@ -57,7 +56,6 @@ void *ft_memmove(void *dest, const void *src, size_t n)
 {
 	size_t i = 0;
 
-
 	if (dest > src)
     {
 		i = n;
@@ -92,21 +90,26 @@ char *get_next_line(int fd)
 			ft_memmove(buffer, tmp + 1, ft_strlen(tmp + 1) +1);
 			return res;
 		}
+		
 		if (ft_strlen(buffer) > 0)
 		{
 			if (!str_append_str(&res, buffer))
 				return free(res), NULL;
 			buffer[0] = 0;
 		}
+
 		read_ret = read(fd, buffer, BUFFER_SIZE);
+
 		if (read_ret == -1)
 			return free(res), NULL;
+
 		if (read_ret == 0)
 		{
 			if (ft_strlen(res) == 0)
 				return free(res), NULL;
 			return res;
 		}
+
 		buffer[read_ret] = 0;
 	}
 }

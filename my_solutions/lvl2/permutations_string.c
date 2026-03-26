@@ -1,86 +1,67 @@
+#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
-void putchar(char c) {
-    write(1, &c, 1);
+int	ft_strlen(char *s)
+{
+	int i = 0;
+	while (s[i])
+		i++;
+	return (i);
 }
 
-void ft_putstr(char *str) {
-    int i = 0;
-
-    while(str[i]){
-        putchar(str[i]);
-        i++;
-    }
+void swap(char *a, char *b)
+{
+	char temp = *a;
+	*a = *b;
+	*b = temp;
 }
 
-int ft_strlen(char *str) {
-    int length = 0;
-    while(str[length]) {
-        length++;
-    }
-    return(length);
+void sort(char *s)
+{
+	int i = 0;
+	while (s[i] && s[i + 1])
+	{
+		if (s[i] > s[i+1])
+		{
+			swap(&s[i], &s[i + 1]);
+			i = 0;
+		}
+		else
+			i++;
+	}
+}
+void	permutations(char *in, int n, char *out, int depth, char *used)
+{
+	if(depth == n)
+	{
+		puts(out);
+		return ;
+	}
+	int i = 0;
+	while (i < n)
+	{
+		if (!used[i])
+		{
+			used[i] = 1;								//MARK
+			out[depth] = in[i];							//STORE
+			permutations(in, n, out, depth + 1, used);	//BACKTRACK
+			used[i] = 0;								//ERASE
+		}
+		i++;
+	}
 }
 
-void sort_string(char *str) {
-    int i = 0;
-    int j;
-    int len = ft_strlen(str);
-
-    while (i < len - 1) {
-        j = i + 1;
-        while (j < len) {
-            if (str[i] > str[j]) {
-                char tmp = str[i];
-                str[i] = str[j];
-                str[j] = tmp;
-            }
-            j++;
-        }
-        i++;
-    }
+int main(int ac, char **av) /// malloc checks and all that jazz..
+{
+	if (ac != 2)
+		return (0);
+	
+	char *str = av[1];
+	int n = ft_strlen(str);
+	char *out = malloc(sizeof(char) * (n + 1));
+	char *used = malloc(sizeof(char) * (n + 1));
+	sort(str); //SORT BEFORE RUNNIN IT
+	permutations(str, n, out, 0, used);
+	free(used);
+	free(out);
 }
-
-void solve_string(char *str, char *res, int *used, int pos, int len) {
-    int i = 0;
-
-    if(pos == len) {
-        res[len] = '\0';
-        ft_putstr(res);
-        putchar('\n');
-        return;
-    }
-    while(i < len) {
-        if(used[i] == 0) {
-            used[i] = 1;
-            res[pos] = str[i];
-            solve_string(str, res, used, pos + 1, len);
-            used[i] = 0;
-        }
-        i++;
-    }
-}
-
-int main(int ac, char **av) {
-    int len = 0;
-    int i = 0;
-
-    if(ac != 2)
-        return(1);
-
-    len = ft_strlen(av[1]);
-    sort_string(av[1]);
-
-    char *res = malloc((len + 1)*sizeof(char));
-    int *used = malloc(len*sizeof(int));
-    
-    while (i < len) {
-        used[i] = 0;
-        i++;
-    }
-    solve_string(av[1], res, used, 0, len);
-    free(res);
-    free(used);
-    return(0);
-}
-
